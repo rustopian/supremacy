@@ -2,8 +2,23 @@ import { Player, Space } from '@boardzilla/core';
 import { StrategyCard } from './StrategyCard.ts';
 import { LawsOfPhysicsCard } from './LawsOfPhysicsCard.ts';
 import { SupremacyGame } from './index.ts';
+import { QuantumAdvancementBoard } from './QuantumAdvancementsBoard.ts';
+import { QuantumComputerBoard } from './QuantumComputerBoard.ts';
 
-export class SupremacyPlayer extends Player {
+export enum CorporateCulture {
+  Pending = 'Pending',
+  VisionaryCollaborators = 'Visionary Collaborators',
+  CorporateDiplomats = 'Corporate Diplomats',
+  BenevolentTraditionalists = 'Benevolent Traditionalists',
+  StealthInnovators = 'Stealth Innovators',
+  BalancedStrategists = 'Balanced Strategists',
+  AmbitiousMavericks = 'Ambitious Mavericks',
+  EthicalOpportunists = 'Ethical Opportunists',
+  CunningExploiters = 'Cunning Exploiters',
+  CorporateOverlords = 'Corporate Overlords',
+}
+
+export class SupremacyPlayer extends Player<SupremacyGame, SupremacyPlayer> {
   qubitCubes: number = 0;
   money: number = 5;
   cooperation: number = 0;
@@ -18,9 +33,41 @@ export class SupremacyPlayer extends Player {
   activeHire: StrategyCard | null = null;
   handSpace: Space<SupremacyGame, SupremacyPlayer>;
   activeHireSpace: Space<SupremacyGame, SupremacyPlayer>;
+  private corporateCulture: CorporateCulture;
+
+  // Quantum boards
+  quantumComputerBoard: QuantumComputerBoard;
+  quantumAdvancementBoard?: QuantumAdvancementBoard;
+
+  // Turn flags
+  actionsTakenThisTurn: number = 0;
+  advancedResearchActionsThisTurn: number = 0;
+  usedQuantumPredictionThisTurn: boolean = false;
+
+  onCreate({ game }: { game: SupremacyGame }) {
+    this.quantumComputerBoard = game.create(QuantumComputerBoard, 'QuantumComputerBoard', {
+      player: this,
+    });
+    this.handSpace = game.create(Space<SupremacyGame, SupremacyPlayer>, 'hand', { player: this });
+  }
+
+  getCorporateCulture(): CorporateCulture {
+    return this.corporateCulture;
+  }
+
+  setCorporateCulture(culture: CorporateCulture) {
+    if (this.corporateCulture !== CorporateCulture.Pending) {
+      throw new Error('Corporate culture already set');
+    }
+    this.corporateCulture = culture;
+  }
 
   hasAvailablePawn(type: 'employee' | 'agent'): boolean {
-    return type === 'employee' ? this.employeePawns > 0 : this.agentPawns > 0;
+    if (type === 'employee') {
+      return this.employeePawns > 0;
+    } else {
+      return this.agentPawns > 0;
+    }
   }
 
   usePawn(type: 'employee' | 'agent') {
@@ -64,5 +111,33 @@ export class SupremacyPlayer extends Player {
     // Logic to play a sabotage card against the target
     this.hand.splice(this.hand.indexOf(card), 1);
     // Apply card effects to the target
+  }
+
+  hasAdvancement(name: string): boolean {
+    return this.quantumAdvancementBoard?.advancements.some(
+      (adv) => adv.name === name && adv.unlocked
+    ) || false;
+  }
+
+  hasUnlockedAllAdvancements(): boolean {
+    return this.quantumAdvancementBoard?.advancements.every((adv) => adv.unlocked) || false;
+  }
+
+  isCorporatioSupremo(): boolean {
+    return this.game.corporatioSupremo === this;
+  }
+
+  resetTurnFlags() {
+    this.actionsTakenThisTurn = 0;
+    this.advancedResearchActionsThisTurn = 0;
+    this.usedQuantumPredictionThisTurn = false;
+  }
+
+  incrementActionsTaken() {
+    this.actionsTakenThisTurn += 1;
+  }
+
+  incrementAdvancedResearchActionsTaken() {
+    this.advancedResearchActionsThisTurn += 1;
   }
 }

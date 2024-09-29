@@ -4,10 +4,10 @@ import {
   Player,
   Space,
   Piece,
-  action,
+  Do,
   union,
 } from '@boardzilla/core';
-import { SupremacyPlayer } from './SupremacyPlayer.ts';
+import { CorporateCulture, SupremacyPlayer } from './SupremacyPlayer.ts';
 import { StrategyCardFactory } from './StrategyCardFactory.ts';
 import { LawsOfPhysicsCard } from './LawsOfPhysicsCard.ts';
 import { StrategyCard } from './StrategyCard.ts';
@@ -15,18 +15,89 @@ import { StrategyCardDeck } from './StrategyCardDeck.ts';
 import { gameCards } from '../../cards.ts';
 import { StrategyCardCategory } from './StrategyCardCategory.ts';
 import { PlayerPiece } from './PlayerPiece.ts';
+import { QuantumAdvancementBoard } from './QuantumAdvancementsBoard.ts';
+import { QuantumComputerBoard } from './QuantumComputerBoard.ts'; // Added import
+
+export enum QubitType {
+  Superconducting = 'Superconducting Qubits',
+  Photonic = 'Photonic Qubits',
+  TrappedIon = 'Trapped Ion Qubits',
+  SiliconSpin = 'Silicon Spin Qubits',
+  Topological = 'Topological Qubits',
+  SuperfluidHelium = 'Superfluid Helium Qubits',
+  DiamondVacancy = 'Diamond Vacancy Qubits',
+  NeutronAtom = 'Neutron Atom Qubits',
+}
 
 export class SupremacyGame extends Game<SupremacyGame, SupremacyPlayer> {
   dystopiaTrack: number = 0;
   phase: 'phase1' | 'phase2' = 'phase1';
   lawsOfPhysicsCards: LawsOfPhysicsCard[] = [];
   strategyCardDeck: StrategyCardDeck;
+  corporatioSupremo?: SupremacyPlayer;
 
   // Define spaces
   field: Space<SupremacyGame, SupremacyPlayer>;
   discardPile: Space<SupremacyGame, SupremacyPlayer>;
   corporateCultureBoard: Space<SupremacyGame, SupremacyPlayer>;
   playerPiecesSpace: Space<SupremacyGame, SupremacyPlayer>;
+
+  // End game conditions
+  checkGameLossCondition(): boolean {
+    if (this.dystopiaTrack >= 10) {
+      this.message('Dystopia has been reached. AI becomes uncontrollable. All players lose.');
+      this.finish(); // Ends the game with no winners
+      return true;
+    }
+    return false;
+  }
+
+  checkGameWinConditions(): boolean {
+    // Check for Domination Victory
+    const playerWithAllAdvancements = this.players.find(
+      (player) => player.quantumAdvancementBoard?.advancements.every((adv) => adv.unlocked)
+    );
+    if (playerWithAllAdvancements) {
+      this.message(`${playerWithAllAdvancements.name} achieves Domination Victory!`);
+      this.finish(playerWithAllAdvancements);
+      return true;
+    }
+
+    // Check for Victory for Humanity in Phase 2
+    const cooperativePlayerReached6Qubits = this.players.find(
+      (player) =>
+        player.quantumComputerBoard?.flipped &&
+        player.cooperation >= 3 &&
+        !player.isCorporatioSupremo()
+    );
+    if (cooperativePlayerReached6Qubits) {
+      this.message('Victory for Humanity! Players with positive Cooperation win.');
+      const winners = this.players.filter((p) => p.cooperation > 0);
+      this.finish(...winners);
+      return true;
+    }
+
+    return false;
+  }
+
+  // Handle phase transition
+  checkPhase1EndConditions() {
+    // Check if any player has flipped their Quantum Computer Board
+    const flippingPlayer = this.players.find(
+      (player) => player.quantumComputerBoard.flipped
+    );
+    if (flippingPlayer) {
+      this.phase = 'phase2';
+      this.setCorporatioSupremo(flippingPlayer);
+    }
+  }
+
+  // Set Corporatio Supremo
+  setCorporatioSupremo(player: SupremacyPlayer) {
+    this.corporatioSupremo = player;
+    this.message(`${player.name} becomes the Corporatio Supremo.`);
+    player.quantumAdvancementBoard = new QuantumAdvancementBoard(this, player);
+  }
 }
 
 export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) => {
@@ -36,8 +107,14 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
   game.playerPiecesSpace = game.create(Space<SupremacyGame, SupremacyPlayer>, 'playerPieces');
 
   game.players.forEach((player) => {
-    const playerPiece = game.create(PlayerPiece, { player });
+    const playerPiece = game.create(PlayerPiece, player.name);
     playerPiece.putInto(game.playerPiecesSpace);
+
+    // Initialize Quantum Computer Board for each player
+    player.quantumComputerBoard = new QuantumComputerBoard(game, player);
+
+    // Create a hand space for each player
+    player.handSpace = game.create(Space<SupremacyGame, SupremacyPlayer>, 'hand', { player });
   });
 
   // Setup game components
@@ -52,38 +129,28 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
   game.strategyCardDeck = new StrategyCardDeck(strategyCards);
 
   // Assign qubit types to players randomly
-  const qubitTypes = [
-    'Superconducting Qubits',
-    'Photonic Qubits',
-    'Trapped Ion Qubits',
-    'Silicon Spin Qubits',
-    'Topological Qubits',
-    'Superfluid Helium Qubits',
-    'Diamond Vacancy Qubits',
-    'Neutron Atom Qubits',
-  ];
+  const qubitTypes = Object.values(QubitType);
 
   game.players.forEach((player) => {
     const qubitType = qubitTypes.splice(Math.floor(Math.random() * qubitTypes.length), 1)[0];
     player.qubitType = qubitType;
-
-    // Create a hand space for each player
-    player.handSpace = game.create(Space<SupremacyGame, SupremacyPlayer>, 'hand', { player });
   });
 
-  // Set Actions
-  const { action } = game;
+  // No need to initialize Quantum Advancement Boards here; they'll be initialized upon flipping
 
   // Define actions
+  const { action } = game;
+
   game.defineActions({
     // Employee Pawn Actions
     researchPhysics: (player) =>
       action({
         prompt: 'Research Physics',
         description: 'Look at both face-down Laws of Physics Cards',
-        condition: () => !player.hasResearchedPhysics,
+        condition: () => !player.hasResearchedPhysics && player.hasAvailablePawn('employee'),
       })
         .do(() => {
+          player.usePawn('employee');
           player.hasResearchedPhysics = true;
           // Logic to privately show face-down cards to the player
           player.viewLawsOfPhysicsCards(game.lawsOfPhysicsCards);
@@ -93,16 +160,18 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
     advanceQuantumTechnology: (player) =>
       action({
         prompt: 'Advance Quantum Technology',
-        description: 'Place one Qubit Cube on your Quantum Advancement Track',
-        condition: () =>
-          player.canAdvanceQuantumTechnology() &&
-          player.hasAvailablePawn('employee'),
+        description: 'Place a Qubit Cube on your Quantum Computer Board',
+        condition: () => player.hasAvailablePawn('employee'),
       })
         .do(() => {
           player.usePawn('employee');
-          player.qubitCubes += 1;
+          player.quantumComputerBoard.placeQubitCube();
+          // Check if board should flip
+          if (player.quantumComputerBoard.isFlipped && game.phase === 'phase1') {
+            game.checkPhase1EndConditions();
+          }
         })
-        .message('{{player.name}} advances their quantum technology.'),
+        .message('{{player.name}} advances quantum technology.'),
 
     isolationCorrection: (player) =>
       action({
@@ -153,34 +222,30 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
           // Place the drawn card into the player's hand space
           card.putInto(player.handSpace);
           card.hideFromAll();
-          card.showToPlayer(player);
+          card.showOnlyTo(player);
         })
         .message('{{player.name}} conducts advanced research and draws a Strategy Card.'),
 
     playHireCard: (player) =>
       action({
-        prompt: 'Play Strategy Card as Hire',
-        description: 'Place a Hire Card for ongoing benefits',
+        prompt: 'Play a Hire Card',
+        description: 'Play a Hire Card from your hand',
         condition: () =>
-          player.handSpace.has(StrategyCard, (card) => card.canBeHired) &&
-          player.hasAvailablePawn('employee') &&
-          !player.hasActiveHire(),
+          player.handSpace.has(StrategyCard, (card) => card.category === StrategyCardCategory.Hire) &&
+          player.hasAvailablePawn('employee'),
       })
         .chooseOnBoard(
           'card',
-          player.handSpace.all(StrategyCard, (card) => card.canBeHired),
+          player.handSpace.all<StrategyCard>(StrategyCard, (card) => card.category === StrategyCardCategory.Hire),
           {
             prompt: 'Select a Hire Card to play',
           }
         )
         .do(({ card }) => {
           player.usePawn('employee');
-          // Move the card to the activeHireSpace using putInto
           card.putInto(player.activeHireSpace);
-          // Optionally adjust visibility if needed
-          card.showToAll(); // or card.hideFromAll() / card.showToPlayer(player)
         })
-        .message('{{player.name}} hires {{card.name}} for ongoing benefits.'),
+        .message('{{player.name}} plays Hire Card {{card.name}}.'),
 
     // Agent Pawn Actions
     corporateEspionage: (player) =>
@@ -190,24 +255,22 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
         condition: () => player.money >= 1 && player.hasAvailablePawn('agent'),
       })
         .chooseOnBoard(
-          'targetPiece',
-          game.playerPiecesSpace.all<PlayerPiece>(PlayerPiece, (p) => p.player !== player),
+          'targetPlayer',
+          game.players.filter((p) => p !== player),
           {
             prompt: 'Choose a player to target',
           }
         )
-        .do(({ targetPiece }) => {
-          const targetPlayer = targetPiece.player;
+        .do(({ targetPlayer }) => {
           player.usePawn('agent');
           player.money -= 1;
-          // Logic to peek at target's hand or steal money
           // For simplicity, let's assume stealing money
           if (targetPlayer.money > 0) {
             targetPlayer.money -= 1;
             player.money += 1;
           }
-        })
-        .message('{{player.name}} conducts corporate espionage against {{targetPiece.player.name}}'),
+          game.message('{{player.name}} conducts corporate espionage against {{targetPlayer.name}} and steals 1 Money.');
+        }),
 
     technologyLicensing: (player) =>
       action({
@@ -216,86 +279,108 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
         condition: () => player.hasAvailablePawn('agent'),
       })
         .chooseOnBoard(
-          'targetPiece',
-          game.playerPiecesSpace.all<PlayerPiece>(PlayerPiece, (p) => p.player !== player),
+          'targetPlayer',
+          game.players.filter((p) => p !== player),
           {
             prompt: 'Choose a player to propose licensing',
           }
         )
-        .do(({ targetPiece }) => {
-          const targetPlayer = targetPiece.player;
+        .do(({ targetPlayer }) => {
           player.usePawn('agent');
           // Logic for initiating trade (requires mutual consent)
           game.initiateTrade(player, targetPlayer);
-        })
-        .message('{{player.name}} proposes technology licensing to {{targetPiece.player.name}}.'),
+          game.message('{{player.name}} proposes technology licensing to {{targetPlayer.name}}.');
+        }),
 
     aiDevelopment: (player) =>
       action({
         prompt: 'AI Development',
         description: 'Place 2 Qubit Cubes on your Quantum Advancement Track',
-        condition: () =>
-          player.canAdvanceQuantumTechnology() && player.hasAvailablePawn('agent'),
+        condition: () => player.hasAvailablePawn('agent'),
       })
         .do(() => {
           player.usePawn('agent');
           player.qubitCubes += 2;
           game.dystopiaTrack += 1;
+          // Check for game ending condition
+          game.checkGameLossCondition();
         })
         .message('{{player.name}} advances AI development, risking dystopia.'),
 
-    // Phase 2 Additional Actions
-    implementAISafeguards: (player) =>
+    unlockAdvancement: (player) =>
       action({
-        prompt: 'Implement AI Safeguards',
-        description: 'Reduce the Dystopia Track by 1',
-        condition: () => game.phase === 'phase2' && player.hasAvailablePawn('employee'),
-      })
-        .do(() => {
-          player.usePawn('employee');
-          let reduction = 1;
-          if (player.isVisionaryCollaborator()) {
-            reduction += 1; // Reduce by an extra point
-          }
-          game.dystopiaTrack = Math.max(0, game.dystopiaTrack - reduction);
-        })
-        .message('{{player.name}} implements AI safeguards, reducing dystopia.'),
-
-    sabotage: (player) =>
-      action({
-        prompt: 'Sabotage',
-        description: 'Use Strategy Cards to hinder opponents',
+        prompt: 'Unlock Quantum Advancement',
+        description: 'Unlock an advancement on your Quantum Advancement Board',
         condition: () =>
           game.phase === 'phase2' &&
-          player.handSpace.has(StrategyCard, (card) => card.category === StrategyCardCategory.Sabotage) &&
+          player.hasAvailablePawn('agent') &&
+          player.isCorporatioSupremo &&
+          player.quantumAdvancementBoard &&
+          player.quantumAdvancementBoard.advancements.some((adv) => !adv.unlocked),
+      })
+        .choose({
+          choices: player.quantumAdvancementBoard!.advancements.filter((adv) => !adv.unlocked).map((adv) => adv.name),
+          prompt: 'Select an advancement to unlock',
+        })
+        .do(({ choice }) => {
+          player.usePawn('agent');
+          const advancement = player.quantumAdvancementBoard!.advancements.find((adv) => adv.name === choice)!;
+          advancement.unlock();
+
+          // Increase Dystopia Track by 1 for each advancement unlocked
+          game.dystopiaTrack += 1;
+
+          // Check for game ending condition
+          game.checkGameLossCondition();
+          game.checkGameWinConditions();
+        })
+        .message('{{player.name}} unlocks {{choice}}.'),
+
+    // Implement 'Seize Bitcoin' action
+    seizeBitcoin: (player) =>
+      action({
+        prompt: 'Seize Bitcoin',
+        description: 'Take all Money from an opposing player',
+        condition: () =>
+          player.isCorporatioSupremo &&
+          player.hasAdvancement('Seize Bitcoin') &&
           player.hasAvailablePawn('agent'),
       })
         .chooseOnBoard(
-          'card',
-          player.handSpace.all(StrategyCard, (card) => card.category === StrategyCardCategory.Sabotage),
+          'targetPlayer',
+          game.players.filter((p) => p !== player),
           {
-            prompt: 'Select a Sabotage Card to play',
+            prompt: 'Choose a player to seize Money from',
           }
         )
-        .chooseOnBoard(
-          'targetPiece',
-          game.playerPiecesSpace.all<PlayerPiece>(PlayerPiece, (p) => p.player !== player),
-          {
-            prompt: 'Choose a player to sabotage',
-          }
-        )
-        .do(({ card, targetPiece }) => {
-          const targetPlayer = targetPiece.player;
+        .do(({ targetPlayer }) => {
           player.usePawn('agent');
-          // Move the card to the discard pile
-          card.putInto(game.discardPile);
-          // Apply card effects to the target
-          player.playSabotageCard(card, targetPlayer);
-          // Dystopia Impact
-          game.dystopiaTrack += card.dystopiaImpact || 0;
+          const amount = targetPlayer.money;
+          targetPlayer.money = 0;
+          player.money += amount;
+          game.message('{{player.name}} seizes {{amount}} Money from {{targetPlayer.name}}.');
         })
-        .message('{{player.name}} sabotages {{targetPiece.player.name}} using {{card.name}}.'),
+        .message('{{player.name}} uses Seize Bitcoin on {{targetPlayer.name}}.'),
 
+    // Additional Phase 2 actions...
+    quantumPrediction: (player) =>
+      action({
+        prompt: 'Quantum Prediction',
+        description: 'Look at the top 3 cards of the Strategy Card Deck',
+        condition: () =>
+          game.phase === 'phase2' &&
+          player.hasAdvancement('Quantum Prediction') &&
+          !player.usedQuantumPredictionThisTurn,
+      })
+        .do(() => {
+          player.usedQuantumPredictionThisTurn = true;
+          const topThreeCards = game.strategyCardDeck.peek(3);
+          // Show the top three cards privately to the player
+          player.viewCards(topThreeCards);
+          game.message('{{player.name}} uses Quantum Prediction to view top 3 Strategy Cards.');
+        }),
+
+    // Pass action
     pass: (player) =>
       action({
         prompt: 'Pass',
@@ -308,68 +393,86 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
   });
 
   // Define game flow
-  game.defineFlow(() => {
-    return {
-      phases: {
-        phase1: {
-          turnOrder: 'clockwise',
-          start: true,
-          onBegin: () => {
-            // Phase 1 setup
-            game.phase = 'phase1';
-          },
-          onEnd: () => {
-            // Check end conditions for Phase 1
+  game.defineFlow(() => ({
+    phases: {
+      phase1: {
+        moves: {
+          researchPhysics: true,
+          advanceQuantumTechnology: true,
+          isolationCorrection: true,
+          fundraising: true,
+          publicRelationsCampaign: true,
+          advancedResearch: true,
+          playHireCard: true,
+          corporateEspionage: true,
+          technologyLicensing: true,
+          // Other Phase 1 actions...
+          pass: true,
+        },
+        turnOrder: {
+          order: 'players',
+        },
+        onTurnBegin: ({ player }) => {
+          player.resetTurnFlags();
+        },
+        onTurnEnd: ({ player }) => {
+          // Check for phase transition at the end of each player's turn
+          if (game.phase === 'phase1') {
             game.checkPhase1EndConditions();
-          },
-          moves: {
-            researchPhysics: true,
-            advanceQuantumTechnology: true,
-            isolationCorrection: true,
-            fundraising: true,
-            publicRelationsCampaign: true,
-            advancedResearch: true,
-            playHireCard: true,
-            corporateEspionage: true,
-            technologyLicensing: true,
-            aiDevelopment: true,
-            pass: true,
-          },
-          endTurnIf: (player) => player.passed || !player.hasAvailablePawns(),
-        },
-        phase2: {
-          turnOrder: 'clockwise',
-          onBegin: () => {
-            // Phase 2 setup
-            game.phase = 'phase2';
-            game.determineCorporateCultures();
-          },
-          moves: {
-            // All Phase 1 actions remain available
-            researchPhysics: true,
-            advanceQuantumTechnology: true,
-            isolationCorrection: true,
-            fundraising: true,
-            publicRelationsCampaign: true,
-            advancedResearch: true,
-            playHireCard: true,
-            corporateEspionage: true,
-            technologyLicensing: true,
-            aiDevelopment: true,
-            // Additional Phase 2 actions
-            implementAISafeguards: true,
-            sabotage: true,
-            pass: true,
-          },
-          endTurnIf: (player) => player.passed || !player.hasAvailablePawns(),
+          }
+          // Additional end-of-turn logic...
         },
       },
-      onEnd: () => {
-        // Game end conditions
-        game.checkEndGameConditions();
+      phase2: {
+        moves: {
+          // All Phase 1 actions remain available
+          researchPhysics: true,
+          advanceQuantumTechnology: true,
+          isolationCorrection: true,
+          fundraising: true,
+          publicRelationsCampaign: true,
+          advancedResearch: true,
+          playHireCard: true,
+          corporateEspionage: true,
+          technologyLicensing: true,
+          aiDevelopment: true,
+          // Additional Phase 2 actions
+          unlockAdvancement: true,
+          seizeBitcoin: true,
+          quantumPrediction: true,
+          // Other Phase 2 actions...
+          pass: true,
+        },
+        turnOrder: {
+          order: 'players',
+        },
+        onTurnBegin: ({ player }) => {
+          player.resetTurnFlags();
+          // Apply per-turn effects based on unlocked advancements
+          if (player.hasAdvancement('Break Encryption')) {
+            game.players.forEach((otherPlayer) => {
+              if (otherPlayer !== player && !otherPlayer.hasAdvancement('Quantum Encryption')) {
+                // Reveal other player's Strategy Cards to 'player'
+                otherPlayer.handSpace.all<StrategyCard>(StrategyCard).forEach((card) => {
+                  card.showToPlayer(player);
+                });
+              }
+            });
+          }
+          // Other per-turn effects...
+        },
+        onTurnEnd: ({ player }) => {
+          // Check for game ending conditions
+          game.checkGameLossCondition();
+          game.checkGameWinConditions();
+        },
       },
-    };
-  });
+    },
+    endGameIf: () => {
+      // Check for overall game end conditions
+      return game.checkGameLossCondition() || game.checkGameWinConditions();
+    },
+  }));
 });
 
 // Utility function to shuffle an array

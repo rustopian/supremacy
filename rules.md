@@ -5,7 +5,7 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 ## Game Overview
 
 - **Players:** 2-5
-- **Objective:** Lead your corporation to quantum supremacy by accumulating Qubit Cubes while managing corporate culture, navigating qubit limitations imposed by the Laws of Physics, forming alliances, and preventing an AI-driven dystopia.
+- **Objective:** Lead your corporation to quantum supremacy by advancing your Quantum Computer Board while managing corporate culture, navigating qubit limitations imposed by the Laws of Physics, forming alliances, and preventing an AI-driven dystopia.
 - **Phases:** The game is divided into two phases:
   1. **Phase 1:** Development, qubit technology advancement, and corporate culture formation.
   2. **Phase 2:** The intensified race for dominance or cooperative victory, where corporations may continue advancing quantum technology, unlock powerful Quantum Advancements, and prevent a dystopian outcome.
@@ -14,7 +14,8 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 
 ### Game Board
 
-- **Quantum Advancement Track:** Tracks each corporation's progress toward quantum supremacy.
+- **Quantum Computer Boards:** Each player has a personal board with 6 Qubit slots. Placing Qubit Cubes grants minor powers and advances quantum technology.
+- **Quantum Advancement Boards:** Becomes available when a player flips their Quantum Computer Board after filling all 6 Qubit slots.
 - **Dystopia Track:** Measures the risk of AI and quantum technology spiraling out of control (range from 0 to 10).
 - **Corporate Culture Board:** A shared board where all players' pawns track their positions along the Cooperation and Innovation axes (from -5 to +5, with 0 being neutral).
 
@@ -29,7 +30,7 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 ### Tokens and Cards
 
 - **Money Tokens:** Currency used for various actions and investments.
-- **Qubit Cubes:** Indicate quantum computing advancements on the Quantum Advancement Track.
+- **Qubit Cubes:** Placed on Quantum Computer Boards to advance technology and gain minor powers.
 - **Interference Cubes:** Represent errors and setbacks in quantum systems.
 - **Strategy Cards:**
   - **Phase 1 Strategy Cards:** Used during Phase 1 for development and shaping corporate culture.
@@ -59,8 +60,9 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 
 ### Prepare the Game Board
 
-1. Place the **Quantum Advancement Track**, **Dystopia Track**, and **Corporate Culture Board** on the table.
-2. Place markers at starting positions (0 for all tracks).
+1. Each player receives their **Quantum Computer Board**.
+2. Place the **Dystopia Track** and **Corporate Culture Board** on the table.
+3. Place markers at starting positions (0 for all tracks).
 
 ### Place Pawns on the Corporate Culture Board
 
@@ -70,6 +72,8 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 
 1. Shuffle the **Laws of Physics Cards** and place two cards face down in a designated area.
 2. Players may freely shuffle these two face-down cards at any time to obscure information.
+
+#### Laws of Physics Cards Summary
 
 1. **Thermal Fluctuation Limit**
    - *Affects:* Superconducting Qubits, Superfluid Helium Qubits
@@ -121,18 +125,13 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 
 ## Gameplay
 
-### General Turn Structure
+### Turn Structure
 
-- The game is played over multiple rounds.
-- Each round consists of players taking turns placing their pawns on action spaces.
-- Turn order proceeds clockwise from the first player.
-
-**On your turn, you may perform one of the following:**
-
-- Place one pawn (Employee or Agent) on an available action space.
-- Pass (once you pass, you cannot take further actions in that round).
-
-- Once all players have passed, the round ends.
+- The game is played over a series of rounds.
+- Each round consists of players taking turns in order.
+- On your turn, you may:
+  - Place one pawn onto an action space and perform the action.
+  - Pass (if you have no pawns remaining or choose to).
 - At the end of the round, all pawns are retrieved.
 - The **First Player Token** rotates clockwise to the next player.
 
@@ -153,7 +152,7 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 
 #### Objective
 
-- Advance your corporation's quantum technology by accumulating Qubit Cubes.
+- Advance your corporation's quantum technology by placing Qubit Cubes on your Quantum Computer Board.
 - Shape your corporate culture along the Cooperation and Innovation axes.
 - Discover whether your qubit type is viable for quantum supremacy through Research Physics.
 
@@ -169,7 +168,14 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
   - **Purpose:** Determine if your qubit type is excluded from reaching quantum supremacy.
 
 - **Advance Quantum Technology**
-  - **Effect:** Place one Qubit Cube on your Quantum Advancement Track.
+  - **Effect:** Place one Qubit Cube on your Quantum Computer Board and gain a minor power.
+  - **Minor Powers (based on Qubit Cube placed):**
+    1. **Gain 1 Money immediately.**
+    2. **Remove 1 Interference Cube immediately if any.**
+    3. **Increase your Cooperation by +1 on the Corporate Culture Board (maximum of +5).**
+    4. **Draw 1 Strategy Card.**
+    5. **Increase your Innovation by +1 on the Corporate Culture Board (maximum of +5).**
+    6. **Gain an extra Employee Pawn for this round.**
   - **Restriction:** Cannot advance if your qubit type is excluded (if both corresponding Laws of Physics Cards are revealed at the end of Phase 1).
 
 - **Isolation/Correction**
@@ -199,7 +205,7 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
   - **Note:** Resources, Money, and Strategy Cards cannot be traded unless an action or card allows it.
 
 - **AI Development**
-  - **Effect:** Place 2 Qubit Cubes on your Quantum Advancement Track.
+  - **Effect:** Place 1 Qubit Cube on your Quantum Computer Board and gain an additional Qubit Cube (total of 2 Qubit Cubes placed). Gain minor powers accordingly.
   - **Dystopia Impact:** Advances the Dystopia Track by 1.
   - **Restriction:** Cannot use if your qubit type is excluded.
 
@@ -207,14 +213,14 @@ Welcome to **Supremacy**, a strategic board game where you lead a corporation in
 
 Phase 1 ends when:
 
-1. **Condition 1:** A player accumulates 10 Qubit Cubes, their qubit type is not excluded, and they have neutral or negative Cooperation (**Coop ≤ +2**).
+1. **Condition 1:** A player fills all 6 Qubit slots on their Quantum Computer Board (places 6 Qubit Cubes), flips their board, their qubit type is not excluded, and they have neutral or negative Cooperation (**Coop ≤ +2**).
    - **Result:** Phase 2 begins with this player becoming the **Corporatio Supremo (CS)**.
 
-2. **Condition 2:** A player accumulates 10 Qubit Cubes, their qubit type is not excluded, and they have high Cooperation (**Coop ≥ +3**).
+2. **Condition 2:** A player fills all 6 Qubit slots on their Quantum Computer Board, flips their board, their qubit type is not excluded, and they have high Cooperation (**Coop ≥ +3**).
    - **Result:** **Victory for Humanity**—a cooperative victory for all corporations with positive Cooperation (**Coop ≥ +1**). The game ends here.
 
-3. **Condition 3:** A player accumulates 10 Qubit Cubes, but their qubit type is excluded.
-   - **Result:** Phase 1 ends, but no player receives a Quantum Advancement board yet.
+3. **Condition 3:** A player fills all 6 Qubit slots on their Quantum Computer Board, flips their board, but their qubit type is excluded.
+   - **Result:** Phase 1 ends, but no player receives a Quantum Advancement Board yet.
 
 4. **Revealing Laws of Physics Cards:**
    - At the end of Phase 1, all Laws of Physics Cards are revealed.
@@ -224,7 +230,7 @@ Phase 1 ends when:
 
 - **Mechanics:**
   - Cards are only revealed to all players at the end of Phase 1.
-  - If a Laws of Physics Cards corresponding to a qubit type is revealed, that qubit type is excluded from achieving quantum supremacy.
+  - If a Laws of Physics Card corresponding to a qubit type is revealed, that qubit type is excluded from achieving quantum supremacy.
   - Players cannot switch qubit types.
   - Players with excluded qubit types must adjust their strategies for Phase 2.
 
@@ -233,13 +239,13 @@ Phase 1 ends when:
 #### Objective
 
 - **For the Corporatio Supremo (CS):**
-  - Unlock all 6 Quantum Advancements on their Quantum Advancement board to achieve a **Domination Victory**.
+  - Unlock all 6 Quantum Advancements on their Quantum Advancement Board to achieve a **Domination Victory**.
 
 - **For Other Players:**
   - **If your qubit type is viable:**
-    - Continue advancing your quantum technology to accumulate 10 Qubit Cubes and obtain your own Quantum Advancement board.
+    - Continue advancing your quantum technology by filling all 6 Qubit slots on your Quantum Computer Board, flipping it to obtain your own Quantum Advancement Board.
   - **If you have high Cooperation (**Coop ≥ +3**):**
-    - Achieve **Victory for Humanity** by reaching 10 Qubit Cubes. All corporations with positive Cooperation (**Coop ≥ +1**) win.
+    - Achieve **Victory for Humanity** by flipping your Quantum Computer Board. All corporations with positive Cooperation (**Coop ≥ +1**) win.
   - **If you have neutral or negative Cooperation:**
     - Compete to unlock all 6 Quantum Advancements and achieve a **Domination Victory**.
   - **If your qubit type is excluded:**
@@ -257,78 +263,96 @@ Phase 1 ends when:
   - Similar thresholds apply for Innovation.
 
 - **Culture Types and Effects:**
-Visionary Collaborators (High Cooperation, High Innovation):
 
-Abilities:
-Collective Victory: If any Visionary Collaborator achieves quantum supremacy, all Visionary Collaborators win.
-Dystopia Mitigation: Actions to reduce the Dystopia Track are more effective (reduce by an extra point).
-Corporate Diplomats (High Cooperation, Neutral Innovation):
+**Visionary Collaborators (High Cooperation, High Innovation):**
 
-Abilities:
-Negotiation Power: Can form alliances without any restrictions.
-Resource Sharing: May freely trade Money and resources with allies (if allowed by actions or cards).
-Benevolent Traditionalists (High Cooperation, Low Innovation):
+*Abilities:*
 
-Abilities:
-Cultural Stability: Immune to certain sabotage effects.
-Dystopia Resistance: Actions by others that would increase the Dystopia Track have less impact on them.
-Ethical Opportunists (Low Cooperation, High Innovation):
+- **Collective Victory:** If any Visionary Collaborator achieves quantum supremacy, all Visionary Collaborators win.
+- **Dystopia Mitigation:** Actions to reduce the Dystopia Track are more effective (reduce by an extra point).
 
-Restrictions:
-Trust Deficit: Opponents' defensive actions are more effective against them.
-Dystopia Acceleration: Their aggressive actions advance the Dystopia Track by an additional point.
-Cunning Exploiters (Low Cooperation, Neutral Innovation):
+**Corporate Diplomats (High Cooperation, Neutral Innovation):**
 
-Restrictions:
-Alliance Exclusion: Cannot form alliances.
-Resource Hoarding: Must spend extra Money to perform cooperative actions.
-Corporate Overlords (Low Cooperation, Low Innovation):
+*Abilities:*
 
-Restrictions:
-Isolation Penalty: Cannot form alliances or pacts.
-Dystopia Acceleration: Aggressive actions advance the Dystopia Track by additional points.
-Vulnerability: More susceptible to sabotage.
-Balanced Strategists (Neutral Cooperation, Neutral Innovation):
+- **Negotiation Power:** Can form alliances without any restrictions.
+- **Resource Sharing:** May freely trade Money and resources with allies (if allowed by actions or cards).
 
-Abilities:
-Adaptability: May adjust their Cooperation or Innovation by ±1 once per round.
-Versatility: Can perform actions with fewer restrictions.
-Stealth Innovators (Neutral Cooperation, High Innovation):
+**Benevolent Traditionalists (High Cooperation, Low Innovation):**
 
-Abilities:
-Technological Edge: Gain bonuses when advancing quantum technology.
-Covert Operations: Can perform certain actions without revealing them immediately.
-Ambitious Mavericks (Neutral Cooperation, Low Innovation):
+*Abilities:*
 
-Abilities:
-Unpredictable: Gain unique tactics that others may not expect.
-Flexible Strategy: Can switch focus mid-game with less penalty.
+- **Cultural Stability:** Immune to certain sabotage effects.
+- **Dystopia Resistance:** Actions by others that would increase the Dystopia Track have less impact on them.
 
-### Quantum Advancements Board
+**Ethical Opportunists (Low Cooperation, High Innovation):**
+
+*Restrictions:*
+
+- **Trust Deficit:** Opponents' defensive actions are more effective against them.
+- **Dystopia Acceleration:** Their aggressive actions advance the Dystopia Track by an additional point.
+
+**Cunning Exploiters (Low Cooperation, Neutral Innovation):**
+
+*Restrictions:*
+
+- **Alliance Exclusion:** Cannot form alliances.
+- **Resource Hoarding:** Must spend extra Money to perform cooperative actions.
+
+**Corporate Overlords (Low Cooperation, Low Innovation):**
+
+*Restrictions:*
+
+- **Isolation Penalty:** Cannot form alliances or pacts.
+- **Dystopia Acceleration:** Aggressive actions advance the Dystopia Track by additional points.
+- **Vulnerability:** More susceptible to sabotage.
+
+**Balanced Strategists (Neutral Cooperation, Neutral Innovation):**
+
+*Abilities:*
+
+- **Adaptability:** May adjust their Cooperation or Innovation by ±1 once per round.
+- **Versatility:** Can perform actions with fewer restrictions.
+
+**Stealth Innovators (Neutral Cooperation, High Innovation):**
+
+*Abilities:*
+
+- **Technological Edge:** Gain bonuses when advancing quantum technology.
+- **Covert Operations:** Can perform certain actions without revealing them immediately.
+
+**Ambitious Mavericks (Neutral Cooperation, Low Innovation):**
+
+*Abilities:*
+
+- **Unpredictable:** Gain unique tactics that others may not expect.
+- **Flexible Strategy:** Can switch focus mid-game with less penalty.
+
+### Quantum Advancement Board
 
 - **For the Corporatio Supremo (CS):**
-  - Gains access to a **Quantum Advancements Board** with 6 Quantum Advancements.
+  - Gains access to a **Quantum Advancement Board** with 6 Quantum Advancements.
 
 - **Unlocking Advancements:**
   - Requires dedicating Employee or Agent Pawns to unlock each advancement.
 
 - **Advancement Examples:**
-  - Break Encryption
-  - Hypersearch
-  - Seize Bitcoin
-  - Quantum Prediction
-  - Instantaneous Communication
-  - Resource Duplication
+  - **Break Encryption**
+  - **Hypersearch**
+  - **Seize Bitcoin**
+  - **Quantum Prediction**
+  - **Instantaneous Communication**
+  - **Quantum Encryption**
 
 - **Dystopia Impact:**
   - Unlocking or using advancements may advance the Dystopia Track.
 
 - **For Other Players:**
-  - **If you accumulate 10 Qubit Cubes in Phase 2:**
-    - Obtain your own Quantum Advancements Board.
+  - **If you flip your Quantum Computer Board in Phase 2:**
+    - Obtain your own **Quantum Advancement Board**.
     - Begin unlocking advancements to compete for a **Domination Victory**.
   - **High Cooperation Players:**
-    - Achieving 10 Qubit Cubes triggers a **Victory for Humanity** if you have high Cooperation.
+    - Flipping your Quantum Computer Board triggers a **Victory for Humanity** if you have high Cooperation.
 
 ### Action Spaces in Phase 2
 
@@ -374,8 +398,8 @@ Flexible Strategy: Can switch focus mid-game with less penalty.
 
 - **Victory for Humanity (Cooperative Victory):**
   - **Condition:**
-    - **In Phase 1:** A player with high Cooperation reaches 10 Qubit Cubes.
-    - **In Phase 2:** A player with high Cooperation (not the CS) reaches 10 Qubit Cubes.
+    - **In Phase 1:** A player with high Cooperation flips their Quantum Computer Board.
+    - **In Phase 2:** A player with high Cooperation (not the CS) flips their Quantum Computer Board.
   - **Outcome:** All corporations with positive Cooperation win.
 
 - **Dystopia Outcome:**
@@ -466,76 +490,4 @@ Flexible Strategy: Can switch focus mid-game with less penalty.
 - **Replayability:**
   - The combination of different qubit types, corporate cultures, and player choices ensures a unique experience each game.
 
-Embark on the journey to quantum supremacy. Will you collaborate for a brighter future, dominate through unrivaled power, or risk unleashing an uncontrollable AI? Your strategic decisions will shape the fate of the world in Supremacy.
-
-2. **Money Economy**
-   - **Earning Money:**
-     - Through actions like Fundraising.
-     - Specific Strategy Cards may provide additional Money.
-   - **Spending Money:**
-     - Required for certain actions (e.g., Advanced Research, Corporate Espionage).
-     - Costs associated with Strategy Cards or activating Hires.
-   - **Trading Money:**
-     - Not allowed unless a specific action or card permits it.
-   - **Money Costs:**
-     - Detailed costs for actions and Strategy Cards will be specified in the card descriptions.
-
-3. **Alliances and Negotiations**
-   - **Forming Alliances:**
-     - Players may agree to form alliances verbally.
-     - Alliances have no binding rules unless specified by a card or action.
-   - **Restrictions:**
-     - Some cultures cannot form alliances.
-     - Corporatio Supremo can disrupt alliances using certain Quantum Advancements.
-   - **Resource Sharing:**
-     - Only allowed if a specific action or card permits it.
-
-4. **Turn Order and Passing**
-   - **Turn Order:**
-     - Proceeds clockwise from the first player.
-   - **Passing:**
-     - A player may pass when they have no actions remaining or choose to.
-     - Once a player passes, they cannot take further actions in that round.
-   - **Round End:**
-     - The round ends when all players have passed.
-     - Pawns are retrieved, and a new round begins.
-
-5. **Action Space Occupancy**
-   - **Exclusive Spaces:**
-     - Some action spaces can only be occupied by one pawn per round.
-   - **Shared Spaces:**
-     - Other action spaces can be occupied by multiple pawns from different players.
-   - **Planning:**
-     - Players must strategize placement due to limited availability and competition for spaces.
-
-6. **Player Elimination**
-   - **No Player Elimination:**
-     - Players are never eliminated from the game.
-     - Even if their qubit type is excluded, they can still influence the game in Phase 2.
-
-7. **Victory Points**
-   - **No Victory Point System:**
-     - The game does not use victory points.
-     - Winning is determined by the endgame conditions described earlier.
-
-8. **Components Quantities and Player Counts**
-   - **Components Quantities:**
-     - Specific quantities of components are standardized and do not change based on player count.
-   - **Player Counts:**
-     - The game is designed to accommodate 2-5 players without the need for adjustments.
-
-## Final Notes
-
-- **Strategic Depth:**
-  - Success in Supremacy requires careful planning, adaptability, and awareness of both your corporation's strengths and the actions of your competitors.
-
-- **Player Interaction:**
-  - Alliances, sabotage, and negotiations are integral to the gameplay.
-
-- **Ethical Considerations:**
-  - Players must balance ambition with responsibility to avoid a dystopian outcome.
-
-- **Replayability:**
-  - The combination of different qubit types, corporate cultures, and player choices ensures a unique experience each game.
-
-Embark on the journey to quantum supremacy. Will you collaborate for a brighter future, dominate through unrivaled power, or risk unleashing an uncontrollable AI? Your strategic decisions will shape the fate of the world in Supremacy.
+Embark on the journey to quantum supremacy. Will you collaborate for a brighter future, dominate through unrivaled power, or risk unleashing an uncontrollable AI? Your strategic decisions will shape the fate of the world in **Supremacy**.
