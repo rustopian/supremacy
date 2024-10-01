@@ -111,8 +111,8 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
     playerPiece.putInto(game.playerPiecesSpace);
 
     // Initialize Quantum Computer Board for each player
-    player.quantumComputerBoard = new QuantumComputerBoard(game, player);
-
+    player.quantumComputerBoard = game.create(QuantumComputerBoard, 'QuantumComputerBoard', { player });
+    
     // Create a hand space for each player
     player.handSpace = game.create(Space<SupremacyGame, SupremacyPlayer>, 'hand', { player });
   });
@@ -167,7 +167,7 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
           player.usePawn('employee');
           player.quantumComputerBoard.placeQubitCube();
           // Check if board should flip
-          if (player.quantumComputerBoard.isFlipped && game.phase === 'phase1') {
+          if (player.quantumComputerBoard.flipped && game.phase === 'phase1') {
             game.checkPhase1EndConditions();
           }
         })
@@ -231,7 +231,7 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
         prompt: 'Play a Hire Card',
         description: 'Play a Hire Card from your hand',
         condition: () =>
-          player.handSpace.has(StrategyCard, (card) => card.category === StrategyCardCategory.Hire) &&
+          player.handSpace.has(StrategyCard, (card) => card.canBeHired) &&
           player.hasAvailablePawn('employee'),
       })
         .chooseOnBoard(
@@ -314,8 +314,8 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
         condition: () =>
           game.phase === 'phase2' &&
           player.hasAvailablePawn('agent') &&
-          player.isCorporatioSupremo &&
-          player.quantumAdvancementBoard &&
+          player.isCorporatioSupremo() &&
+          player.quantumAdvancementBoard !== undefined &&
           player.quantumAdvancementBoard.advancements.some((adv) => !adv.unlocked),
       })
         .choose({
@@ -342,17 +342,13 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
         prompt: 'Seize Bitcoin',
         description: 'Take all Money from an opposing player',
         condition: () =>
-          player.isCorporatioSupremo &&
+          player.isCorporatioSupremo() &&
           player.hasAdvancement('Seize Bitcoin') &&
           player.hasAvailablePawn('agent'),
       })
-        .chooseOnBoard(
-          'targetPlayer',
-          game.players.filter((p) => p !== player),
-          {
-            prompt: 'Choose a player to seize Money from',
-          }
-        )
+        .chooseOnBoard('targetPlayer', game.players.not(player), {
+          prompt: 'Choose a player to seize Money from',
+        })
         .do(({ targetPlayer }) => {
           player.usePawn('agent');
           const amount = targetPlayer.money;
@@ -454,7 +450,7 @@ export default createGame(SupremacyPlayer, SupremacyGame, (game: SupremacyGame) 
               if (otherPlayer !== player && !otherPlayer.hasAdvancement('Quantum Encryption')) {
                 // Reveal other player's Strategy Cards to 'player'
                 otherPlayer.handSpace.all<StrategyCard>(StrategyCard).forEach((card) => {
-                  card.showToPlayer(player);
+                  card.showOnlyTo(player);
                 });
               }
             });
